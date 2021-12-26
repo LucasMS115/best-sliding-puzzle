@@ -1,0 +1,88 @@
+:root {
+    font-size: 62.5%; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: 0;
+}
+
+.puzzle-container {
+    position: relative;
+    width: 614px;
+    height: 614px;
+    border: 2px solid black;
+    margin: 15px auto;
+    padding: 5px;
+}
+
+.puzzle-container div{
+    position: absolute;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    border: .1px solid white;
+}
+
+.puzzle-container div img{
+    width: 600px;
+    height: 600px;
+}
+
+/* image pieces styles --------------- */
+
+.x-left{
+    margin-left: 0px;
+}
+
+.x-mid{
+    margin-left: -200px;
+}
+
+.x-right{
+    margin-left: -400px;
+}
+
+.y-top{
+    margin-top: 0px;
+}
+
+.y-mid{
+    margin-top: -200px;
+}
+
+.y-bottom{
+    margin-top: -400px;
+}
+
+/* Image pieces containers | positions --------------------------------- */
+
+.left{
+
+}
+
+.center{
+    left: 205px;
+}
+
+.right{
+    left: 405px;
+}
+
+.top{
+
+}
+
+.middle{
+    top: 205px;
+}
+
+.bottom{
+    top: 405px;
+}
+
+
+/* --------------------------------- */
