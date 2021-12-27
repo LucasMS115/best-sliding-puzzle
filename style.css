@@ -1,5 +1,10 @@
+@font-face {
+    font-family: 'spider-man';
+    src: URL('./assets/fonts/HOMOARAK.TTF') format('truetype');
+}
+
 :root {
-    font-size: 62.5%; 
+    font-size: 62.5%;
 }
 
 * {
@@ -9,78 +14,161 @@
     outline: 0;
 }
 
+body {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #000000;
+    background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
+}
+
+section{
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    background-image: url('./assets/mid_back.jpg');
+    background-repeat: repeat;
+}
+
+.meme-face-container{
+    position: absolute;
+    width: 100px;
+    right: 0;
+    top: 0;
+    margin-top: -4px;
+}
+
+.meme-face-container img{
+    cursor: pointer;
+    width: 100%;
+    transform: rotate(180deg);
+}
+
+.btn-container {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 40px;
+    bottom: 30px;
+    width: 200px;
+    height: 100px;
+    padding: 0px 0px 35px 5px;
+}
+
+.btn-shuffle {
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: #e4eee9;
+    background-image: linear-gradient(315deg, #e4eee9 0%, #93a5ce 74%);
+    font-family: "spider-man";
+    font-size: 25px;
+    border: none;
+    box-shadow: #93a5ce -5px 5px, #e4eee9 -10px 10px;
+    transition: all linear .1s;
+}
+
+.btn-shuffle:active {
+    box-shadow: #e4eee9 -1px 1px;
+    margin: 0 0 -5px -5px;
+}
+
 .puzzle-container {
     position: relative;
     width: 614px;
     height: 614px;
-    border: 2px solid black;
     margin: 15px auto;
     padding: 5px;
+
+    background-image: url("./assets/board_back.jpg");
+    background-size: cover;
 }
 
-.puzzle-container div{
+.puzzle-container div {
     position: absolute;
     overflow: hidden;
     width: 200px;
     height: 200px;
     border-radius: 10px;
-    border: .1px solid white;
+    transition: all linear .1s;
+    cursor:grabbing;
+
+    /* prevent player from selecting the pieces elements */
+
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    user-select: none;
+    /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
-.puzzle-container div img{
+.puzzle-container div img {
     width: 600px;
     height: 600px;
 }
 
+.cover {
+    /* prevent player from dragging the image on click */
+    left: 0;
+    top: 0;
+    flex: 1;
+}
+
 /* image pieces styles --------------- */
 
-.x-left{
+.x-left {
     margin-left: 0px;
 }
 
-.x-mid{
+.x-mid {
     margin-left: -200px;
 }
 
-.x-right{
+.x-right {
     margin-left: -400px;
 }
 
-.y-top{
+.y-top {
     margin-top: 0px;
 }
 
-.y-mid{
+.y-mid {
     margin-top: -200px;
 }
 
-.y-bottom{
+.y-bottom {
     margin-top: -400px;
 }
 
 /* Image pieces containers | positions --------------------------------- */
 
-.left{
-
+.left {
+    left: 5px;
 }
 
-.center{
+.center {
     left: 205px;
 }
 
-.right{
+.right {
     left: 405px;
 }
 
-.top{
-
+.top {
+    top: 5px;
 }
 
-.middle{
+.middle {
     top: 205px;
 }
 
-.bottom{
+.bottom {
     top: 405px;
 }
 
