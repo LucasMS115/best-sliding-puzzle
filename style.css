@@ -23,12 +23,56 @@ body {
     background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
 }
 
+.start-modal{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
+    opacity: 0.9;
+}
+
+.btn-start {
+    cursor: pointer;
+    text-align: center;
+    width: 250px;
+    height: 100px;
+    background-color: #e4eee9;
+    background-image: linear-gradient(315deg, #e4eee9 0%, #93a5ce 74%);
+    font-family: "spider-man";
+    font-size: 45px;
+    border: none;
+    box-shadow: #93a5ce -5px 5px, #e4eee9 -10px 10px;
+    transition: all linear .1s;
+}
+
+.btn-start:active {
+    box-shadow: #e4eee9 -1px 1px;
+    margin: 0 0 -5px -5px;
+}
+
+
 section{
     position: relative;
     width: 100%;
     height: fit-content;
     background-image: url('./assets/mid_back.jpg');
     background-repeat: repeat;
+}
+
+.scoreboard-container{
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background-image: linear-gradient(315deg, #e4eee9 0%, #93a5ce 74%);
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid black;
+    font-family: "spider-man";
+    font-size: 25px;
 }
 
 .meme-face-container{
@@ -45,7 +89,7 @@ section{
     transform: rotate(180deg);
 }
 
-.btn-container {
+.btn-shuffle-container {
     position: absolute;
     display: flex;
     align-items: center;
@@ -55,9 +99,11 @@ section{
     width: 200px;
     height: 100px;
     padding: 0px 0px 35px 5px;
+
 }
 
 .btn-shuffle {
+    display: none;
     cursor: pointer;
     text-align: center;
     width: 100%;
@@ -66,7 +112,7 @@ section{
     background-image: linear-gradient(315deg, #e4eee9 0%, #93a5ce 74%);
     font-family: "spider-man";
     font-size: 25px;
-    border: none;
+    border: 2px solid black;
     box-shadow: #93a5ce -5px 5px, #e4eee9 -10px 10px;
     transition: all linear .1s;
 }

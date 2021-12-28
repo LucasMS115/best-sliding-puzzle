@@ -21,11 +21,29 @@
 
 <body>
 
+    <div id="start__modal" class="start-modal">
+        <button id="btn__start" class="btn-start">Start</button>
+    </div>
+    
     <section>
 
         <figure class="meme-face-container">
             <img src="./assets/meme-face.png" alt="Bully maguire meme face">
         </figure>
+
+        <div class="scoreboard-container">
+
+            <div >
+                <span>Time: </span>
+                <span id="chronometer__number" ></span>
+            </div>    
+
+            <div >
+                <span >Moves: </span>
+                <span id="moves__counter" ></span>
+            </div>   
+
+        </div>
 
         <div class="puzzle-container" id="puzzle__container">
     
@@ -79,7 +97,7 @@
             </div>
         </div>
     
-        <div class="btn-container">
+        <div class="btn-shuffle-container">
             <button id="btn__shuffle" class="btn-shuffle" >SHUFFLE</button>
         </div>
 

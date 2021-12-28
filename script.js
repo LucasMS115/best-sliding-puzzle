@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     
         left bottom | center bottom |   right bottom        */
 
+
+    /*  DOM elements ------------------------------------------------------------*/
+
     const pieces = {
         leftTop: document.querySelector("#left__top"),
         centerTop: document.querySelector("#center__top"),
@@ -22,9 +25,55 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const btnShuffle = document.querySelector("#btn__shuffle");
+    const startModal = document.querySelector("#start__modal");
+    const btnStart = document.querySelector("#btn__start");
+    const chronometerNumber = document.querySelector("#chronometer__number");
+    const movesNumber = document.querySelector("#moves__counter");
+
+    /*  DOM elements ------------------------------------------------------------*/
+
+    /* chronometer --------------------------------------------------------------*/
+    /* src: https://codepen.io/vanessametonini/pen/GMWEBv */
+
+    let hours = `00`,
+        minutes = `00`,
+        seconds = `00`,
+        chronometerCall;
+
+    function chronometer() {
+
+        seconds++;
+
+        if (seconds < 10) seconds = `0` + seconds;
+
+        if (seconds > 59) {
+            seconds = `00`;
+            minutes++;
+
+            if (minutes < 10) minutes = `0` + minutes;
+        };
+
+        if (minutes > 59) {
+            minutes = `00`;
+            hours++;
+
+            if (hours < 10) hours = `0` + hours;
+        }
+
+        chronometerNumber.textContent = `${hours}:${minutes}:${seconds}`;
+
+    }
+
+    /* chronometer --------------------------------------------------------------*/
 
     let freePlace = "left bottom";
     let allPositions = ["left top", "center top", "right top", "left middle", "center middle", "right middle", "left bottom", "center bottom", "right bottom"];
+    let movesCounter = 0;
+
+    function updateMoveCounter() {
+        movesCounter++;
+        movesNumber.textContent = movesCounter;
+    }
 
     function shuffleArray(array) {
         let currentIndex = array.length;
@@ -43,17 +92,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     };
 
-    function setColor(piece){
+    function setColor(piece) {
         if (piece.id.replace("__", " ") !== piece.className) {
             piece.style.border = ".5px solid rgb(202, 11, 11)";
             piece.style.boxShadow = "rgb(202, 11, 11) 0px 3px 8px";
-        }else{
+        } else {
             piece.style.border = ".5px solid rgb(1, 4, 194)";
             piece.style.boxShadow = "rgb(74, 25, 250) 0px 3px 8px";
         }
     }
-    
-    function startingColors(){
+
+    function startingColors() {
 
         Object.entries(pieces).forEach((piece) => {
             setColor(piece[1]);
@@ -62,6 +111,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function shuffleBoard() {
+
+        /* reseting move counter & timer */
+        movesCounter = 0;
+        movesNumber.textContent = movesCounter;
+
+        clearInterval(chronometerCall);
+        chronometerNumber.textContent = `00:00:00`;
+        hours = `00`,
+        minutes = `00`,
+        seconds = `00`;
+        chronometerCall = setInterval(chronometer, 1000);
+        /* reseting move counter & timer */
 
         shuffleArray(allPositions);
         freePlace = allPositions[0];
@@ -75,8 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         startingColors();
     };
-
-    btnShuffle.addEventListener("click", shuffleBoard);
 
     function checkMovebility(piece) {
 
@@ -138,13 +197,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
             setColor(piece);
 
-            console.log(checkFinished());
+            updateMoveCounter();
         }
     }
+
+    /* event listeners ---------------------------------------------------------------*/
+
+    btnStart.addEventListener("click", () => {
+        startModal.style.display = "none";
+        btnShuffle.style.display = "block";
+        shuffleBoard();
+    });
+
+    btnShuffle.addEventListener("click", shuffleBoard);
 
     Object.entries(pieces).forEach((piece) => {
         piece[1].addEventListener("click", event => move(event.target.parentNode));
     });
+
 
 
 });
