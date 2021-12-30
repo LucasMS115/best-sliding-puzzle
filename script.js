@@ -1,3 +1,5 @@
+import checkMovebility from './checkMovebility.js';
+
 document.addEventListener("DOMContentLoaded", function () {
 
 
@@ -137,43 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
         startingColors();
     };
 
-    function checkMovebility(piece) {
-
-        let piecePosition = piece.className;
-
-        //prevent middle pieces from moving diagonally
-        if (!freePlace.includes("center") && !freePlace.includes("middle") && piecePosition == "center middle") return false;
-        if (!piecePosition.includes("center") && !piecePosition.includes("middle") && freePlace == "center middle") return false;
-
-        //prevent the middle pieces from moving diagonally
-        const middlePieces = ["center top", "right middle", "center bottom", "left middle"];
-        if (middlePieces.includes(piecePosition) && middlePieces.includes(freePlace)) return false;
-
-        //prevent pieces non-neighbors of the free place from moving 
-        let horizontally = false;
-
-        if (piecePosition.includes("left")) {
-            horizontally = freePlace.includes("left") || freePlace.includes("center") ? true : false;
-        } else if (piecePosition.includes("center")) {
-            horizontally = true;
-        } else {
-            horizontally = freePlace.includes("center") || freePlace.includes("right") ? true : false;
-        }
-
-        // ----------------------------------------------------------------------------------------------
-
-        let vertically = false;
-
-        if (piecePosition.includes("top")) {
-            vertically = freePlace.includes("top") || freePlace.includes("middle") ? true : false;
-        } else if (piecePosition.includes("middle")) {
-            vertically = true;
-        } else {
-            vertically = freePlace.includes("middle") || freePlace.includes("bottom") ? true : false;
-        }
-
-        return (horizontally && vertically);
-    }
+   
 
     function checkFinished() {
         let finished = true;
@@ -190,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function move(piece) {
 
-        if (checkMovebility(piece)) {
+        if (checkMovebility(piece.className, freePlace)) {
             let temp = piece.className;
             piece.className = freePlace;
             freePlace = temp;
@@ -214,7 +180,5 @@ document.addEventListener("DOMContentLoaded", function () {
     Object.entries(pieces).forEach((piece) => {
         piece[1].addEventListener("click", event => move(event.target.parentNode));
     });
-
-
 
 });

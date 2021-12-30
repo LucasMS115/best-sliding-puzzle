@@ -1,3 +1,5 @@
+import {checkMovebility} from "./checkMovebility.js";
+
 //const missingPiece = piece
 
 //map = { piece => position}
