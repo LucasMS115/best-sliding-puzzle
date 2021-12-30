@@ -61,6 +61,8 @@ section{
     height: fit-content;
     background-image: url('./assets/mid_back.jpg');
     background-repeat: repeat;
+    margin: auto;
+    max-width: 1600px;
 }
 
 .scoreboard-container{
