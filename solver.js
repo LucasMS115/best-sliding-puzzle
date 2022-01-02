@@ -3,6 +3,59 @@ import checkMovebility from "./checkMovebility.js";
 //to do: change this to visited boards
 let visitedNodes = [];
 
+class Node {
+
+    constructor(board, freePlace, fullDistance, path) {
+        this.board = board;
+        this.fullDistance = fullDistance;
+        this.lineEnd = false;
+        this.path = path;
+        this.freePlace = freePlace;
+    }
+
+    getMoveblePieces() {
+        let res = [];
+
+        for (let i = 0; i < this.board[0].length; i++) {
+            for (let j = 0; j < this.board.length; j++) {
+                let piece = { x: i, y: j };
+                if (piece !== this.freePlace && checkMovebility(pieceCoordinatesToString(piece), pieceCoordinatesToString(this.freePlace)))
+                    res.push(piece);
+            }
+        }
+
+        return res;
+    }
+
+    swapPiece(piece) {
+
+        let newBoard = this.board.map(function (arr) {
+            return arr.slice();
+        });
+
+        newBoard[this.freePlace.x][this.freePlace.y] = newBoard[piece.x][piece.y];
+        newBoard[piece.x][piece.y] = { piece: null, distance: 0 }
+
+        setDistances(newBoard);
+
+        return { newBoard: newBoard, newFreePlace: piece, newFullDistance: calcFullDistance(newBoard), newPath: [...this.path, piece] }
+
+    }
+
+    getPossibleNodes() {
+        const moveblePieces = this.getMoveblePieces();
+        const possibleNodes = moveblePieces.map(piece => {
+            return this.swapPiece(piece);
+        });
+        possibleNodes.forEach(pb => {
+            setDistances(pb.newBoard);
+        });
+
+        return possibleNodes;
+    }
+
+}
+
 //src: https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
 const top = 0;
 const parent = i => ((i + 1) >>> 1) - 1;
@@ -201,95 +254,6 @@ function printBoard(board) {
     }
 }
 
-class Node {
-
-    constructor(board, freePlace, fullDistance, path) {
-        this.board = board;
-        this.fullDistance = fullDistance;
-        this.lineEnd = false;
-        this.path = path;
-        this.freePlace = freePlace;
-    }
-
-    getMoveblePieces() {
-        let res = [];
-
-        for (let i = 0; i < this.board[0].length; i++) {
-            for (let j = 0; j < this.board.length; j++) {
-                let piece = { x: i, y: j };
-                if (piece !== this.freePlace && checkMovebility(pieceCoordinatesToString(piece), pieceCoordinatesToString(this.freePlace)))
-                    res.push(piece);
-            }
-        }
-
-        return res;
-    }
-
-    swapPiece(piece) {
-
-        let newBoard = this.board.map(function (arr) {
-            return arr.slice();
-        });
-
-        newBoard[this.freePlace.x][this.freePlace.y] = newBoard[piece.x][piece.y];
-        newBoard[piece.x][piece.y] = { piece: null, distance: 0 }
-
-        setDistances(newBoard);
-
-        return { newBoard: newBoard, newFreePlace: piece, newFullDistance: calcFullDistance(newBoard), newPath: [...this.path, piece] }
-
-    }
-
-    getPossibleNodes() {
-        const moveblePieces = this.getMoveblePieces();
-        const possibleNodes = moveblePieces.map(piece => {
-            return this.swapPiece(piece);
-        });
-        possibleNodes.forEach(pb => {
-            setDistances(pb.newBoard);
-        });
-
-        return possibleNodes;
-    }
-
-}
-
-export default function solvePuzzle() {
-
-    const initialState = getInitialState();
-    console.log(initialState);
-    printBoard(initialState.initialBoard);
-    const nextNodesQueue = new PriorityQueue((node1, node2) => node1.fullDistance < node2.fullDistance);
-    let currentNode = new Node(initialState.initialBoard, initialState.freePlace, initialState.fullDistance, []);
-
-
-    let iterations = 0;
-    while (currentNode.fullDistance > 0 && iterations < 5000) {
-
-        iterations++;
-        visitedNodes.push(currentNode.board);
-        const possibleNodes = currentNode.getPossibleNodes();
-        const children = possibleNodes.map(pn => {
-            return new Node(pn.newBoard, pn.newFreePlace, pn.newFullDistance, pn.newPath);
-        });
-
-        nextNodesQueue.push(...children);
-        currentNode = nextNodesQueue.pop();
-        while (checkVisitedNode(currentNode.board)) {
-            currentNode = nextNodesQueue.pop();
-        }
-    }
-
-    console.log( `# ${iterations} iterations #`);
-    console.log( `# full distance = ${currentNode.fullDistance} #`);
-    console.log( `# path size = ${currentNode.path.length} #`);
-
-    printBoard(currentNode.board);
-    currentNode.path = currentNode.path.map(piece => pieceCoordinatesToString(piece));
-    if(currentNode.fullDistance > 0) return null;
-    return currentNode.path;
-}
-
 function getInitialState() {
 
     const initialBoard =
@@ -327,6 +291,43 @@ function getInitialState() {
 
 }
 
+function solvePuzzle() {
+
+    const initialState = getInitialState();
+    console.log(initialState);
+    printBoard(initialState.initialBoard);
+    const nextNodesQueue = new PriorityQueue((node1, node2) => node1.fullDistance < node2.fullDistance);
+    let currentNode = new Node(initialState.initialBoard, initialState.freePlace, initialState.fullDistance, []);
+
+
+    let iterations = 0;
+    while (currentNode.fullDistance > 0 && iterations < 5000) {
+
+        iterations++;
+        visitedNodes.push(currentNode.board);
+        const possibleNodes = currentNode.getPossibleNodes();
+        const children = possibleNodes.map(pn => {
+            return new Node(pn.newBoard, pn.newFreePlace, pn.newFullDistance, pn.newPath);
+        });
+
+        nextNodesQueue.push(...children);
+        currentNode = nextNodesQueue.pop();
+        while (checkVisitedNode(currentNode.board)) {
+            currentNode = nextNodesQueue.pop();
+        }
+    }
+
+    console.log( `# ${iterations} iterations #`);
+    console.log( `# full distance = ${currentNode.fullDistance} #`);
+    console.log( `# path size = ${currentNode.path.length} #`);
+
+    printBoard(currentNode.board);
+    currentNode.path = currentNode.path.map(piece => pieceCoordinatesToString(piece));
+    if(currentNode.fullDistance > 0) return null;
+    return currentNode.path;
+}
+
+export default solvePuzzle;
 
 
 
