@@ -1,10 +1,5 @@
 import checkMovebility from "./checkMovebility.js";
 
-//to do: get this board from the "real board" state
-let initialBoard = [[{ piece: { x: 0, y: 1 }, distance: 0 }, { piece: { x: 1, y: 1 }, distance: 0 }, { piece: { x: 0, y: 0 }, distance: 0 }],
-[{ piece: { x: 2, y: 1 }, distance: 0 }, { piece: { x: 1, y: 2 }, distance: 0 }, { piece: null, distance: 0 }],
-[{ piece: { x: 0, y: 2 }, distance: 0 }, { piece: { x: 1, y: 0 }, distance: 0 }, { piece: { x: 2, y: 0 }, distance: 0 }]];
-
 //to do: change this to visited boards
 let visitedNodes = [];
 
@@ -103,29 +98,35 @@ function calcFullDistance(board) {
 
 function pieceStringToCoordinates(piece) {
 
-    let x = piece.split(" ")[0];
-    let y = piece.split(" ")[1];
-
-    switch (x) {
-        case 'left':
-            x = 0;
-            break;
-        case 'center':
-            x = 1;
-            break;
-        default:
-            x = 2;
-    }
+    let x = piece.split(" ")[1];
+    let y = piece.split(" ")[0];
 
     switch (y) {
-        case 'top':
+        case 'left':
             y = 0;
             break;
-        case 'middle':
+        case 'center':
             y = 1;
+            break;
+        case 'right':
+            y = 2;
             break;
         default:
             y = 2;
+    }
+
+    switch (x) {
+        case 'top':
+            x = 0;
+            break;
+        case 'middle':
+            x = 1;
+            break;
+        case 'bottom': 
+            x = 2;
+            break;
+        default:
+            x = -1;
     }
 
     return { x: x, y: y };
@@ -133,34 +134,34 @@ function pieceStringToCoordinates(piece) {
 
 function pieceCoordinatesToString(piece) {
 
-    let x, y;
-
-    switch (piece.x) {
-        case 0:
-            x = "left";
-            break;
-        case 1:
-            x = "center";
-            break;
-        default:
-            x = "right";
-    }
+    let colClass, lineClass;
 
     switch (piece.y) {
         case 0:
-            y = "top";
+            colClass = "left";
             break;
         case 1:
-            y = "middle";
+            colClass = "center";
             break;
         default:
-            y = "bottom";
+            colClass = "right";
     }
 
-    return `${x} ${y}`;
+    switch (piece.x) {
+        case 0:
+            lineClass = "top";
+            break;
+        case 1:
+            lineClass = "middle";
+            break;
+        default:
+            lineClass = "bottom";
+    }
+
+    return `${colClass} ${lineClass}`;
 }
 
-//to do: optimize this function
+//to do: optimize this function/ change check visited strategy
 function checkVisitedNode(board) {
 
     for (let visIndex = 0; visIndex < visitedNodes.length; visIndex++) {
@@ -193,8 +194,8 @@ function printBoard(board) {
         let line = " | "
         for (let j = 0; j < board[0].length; j++) {
             let piece = board[i][j].piece;
-            if (piece !== null) line += `(${piece.x},${piece.y}) |`
-            else line += "(_,_) |"
+            if (piece !== null) line += `(${piece.x},${piece.y}) | `
+            else line += "(_,_) | "
         }
         console.log(line);
     }
@@ -253,14 +254,19 @@ class Node {
 
 }
 
-function solvePuzzle(initialBoard) {
+export default function solvePuzzle() {
+
+    const initialState = getInitialState();
+    console.log(initialState);
+    printBoard(initialState.initialBoard);
     const nextNodesQueue = new PriorityQueue((node1, node2) => node1.fullDistance < node2.fullDistance);
-    setDistances(initialBoard);
-    let currentNode = new Node(initialBoard, { x: 1, y: 2 }, calcFullDistance(initialBoard), []);
+    let currentNode = new Node(initialState.initialBoard, initialState.freePlace, initialState.fullDistance, []);
 
-    // for(let i = 0; i < 10000; i++){
-    while (currentNode.fullDistance !== 0) {
 
+    let iterations = 0;
+    while (currentNode.fullDistance > 0 && iterations < 5000) {
+
+        iterations++;
         visitedNodes.push(currentNode.board);
         const possibleNodes = currentNode.getPossibleNodes();
         const children = possibleNodes.map(pn => {
@@ -274,13 +280,52 @@ function solvePuzzle(initialBoard) {
         }
     }
 
+    console.log( `# ${iterations} iterations #`);
+    console.log( `# full distance = ${currentNode.fullDistance} #`);
+    console.log( `# path size = ${currentNode.path.length} #`);
+
     printBoard(currentNode.board);
-    console.log(currentNode.path);
-    //translate current node's path to class names 
-    //return te path
+    currentNode.path = currentNode.path.map(piece => pieceCoordinatesToString(piece));
+    if(currentNode.fullDistance > 0) return null;
+    return currentNode.path;
 }
 
-solvePuzzle(initialBoard);
+function getInitialState() {
+
+    const initialBoard =
+        [[{ piece: null, distance: 0 }, { piece: null, distance: 0 }, { piece: null, distance: 0 }],
+        [{ piece: null, distance: 0 }, { piece: null, distance: 0 }, { piece: null, distance: 0 }],
+        [{ piece: null, distance: 0 }, { piece: null, distance: 0 }, { piece: null, distance: 0 }]];
+
+    const piecesCollection = document.querySelector("#puzzle__container").children;
+
+    const piecesPositions = [];
+    const piecesContent = [];
+    let freePlace = {};
+
+    for (let element of piecesCollection) {
+        piecesPositions.push(pieceStringToCoordinates(element.className));
+        piecesContent.push(pieceStringToCoordinates(element.id.replace("__", " ")));
+    };
+
+    
+    for(let i = 0; i < piecesPositions.length; i++){
+        let pos = piecesPositions[i];
+        let piece = piecesContent[i];
+        initialBoard[pos.x][pos.y] = {piece: {x: piece.x, y: piece.y}, distance: 0};
+    }
+
+    for(let i = 0; i < initialBoard.length; i++){
+        for(let j = 0; j < initialBoard[0].length; j++){
+            if(initialBoard[i][j].piece === null) freePlace = {x: i, y: j}
+        }
+    }
+
+    setDistances(initialBoard);
+
+    return {initialBoard: initialBoard, freePlace: freePlace, fullDistance: calcFullDistance(initialBoard)};
+
+}
 
 
 

@@ -1,4 +1,5 @@
 import checkMovebility from './checkMovebility.js';
+import solvePuzzle from './solver.js';
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const btnShuffle = document.querySelector("#btn__shuffle");
+    const btnSolve = document.querySelector("#btn__solve");
     const startModal = document.querySelector("#start__modal");
     const btnStart = document.querySelector("#btn__start");
     const chronometerNumber = document.querySelector("#chronometer__number");
@@ -167,15 +169,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function solve(){
+        const solution = solvePuzzle();
+        if(solution === null) alert("Estado sem solução");
+        else executeSolution(solution);
+    }
+
+    function executeSolution(solution){
+        if(solution.length === 0) return;
+        const piece = document.getElementsByClassName(solution.shift())[0];
+        move(piece);
+        setTimeout(() => executeSolution(solution), 100);
+    }
+
     /* event listeners ---------------------------------------------------------------*/
 
     btnStart.addEventListener("click", () => {
         startModal.style.display = "none";
         btnShuffle.style.display = "block";
+        btnSolve.style.display = "block";
         shuffleBoard();
     });
 
     btnShuffle.addEventListener("click", shuffleBoard);
+    btnSolve.addEventListener("click", solve);
 
     Object.entries(pieces).forEach((piece) => {
         piece[1].addEventListener("click", event => move(event.target.parentNode));
