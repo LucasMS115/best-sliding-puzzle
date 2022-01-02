@@ -235,20 +235,20 @@ class Node {
 
         setDistances(newBoard);
 
-        return { newBoard: newBoard, newFreePlace: piece, newFullDistance: calcFullDistance(newBoard) }
+        return { newBoard: newBoard, newFreePlace: piece, newFullDistance: calcFullDistance(newBoard), newPath: [...this.path, piece] }
 
     }
 
-    getPossibleBoards() {
+    getPossibleNodes() {
         const moveblePieces = this.getMoveblePieces();
-        const possibleBoards = moveblePieces.map(piece => {
+        const possibleNodes = moveblePieces.map(piece => {
             return this.swapPiece(piece);
         });
-        possibleBoards.forEach(pb => {
+        possibleNodes.forEach(pb => {
             setDistances(pb.newBoard);
         });
 
-        return possibleBoards;
+        return possibleNodes;
     }
 
 }
@@ -256,18 +256,18 @@ class Node {
 function solvePuzzle(initialBoard) {
     const nextNodesQueue = new PriorityQueue((node1, node2) => node1.fullDistance < node2.fullDistance);
     setDistances(initialBoard);
-    let currentNode = new Node(initialBoard, { x: 1, y: 2 }, calcFullDistance(initialBoard), "");
+    let currentNode = new Node(initialBoard, { x: 1, y: 2 }, calcFullDistance(initialBoard), []);
 
     // for(let i = 0; i < 10000; i++){
     while (currentNode.fullDistance !== 0) {
 
         visitedNodes.push(currentNode.board);
-        const possibleBoards = currentNode.getPossibleBoards();
-        const possibleNodes = possibleBoards.map(pb => {
-            return new Node(pb.newBoard, pb.newFreePlace, pb.newFullDistance, "");
+        const possibleNodes = currentNode.getPossibleNodes();
+        const children = possibleNodes.map(pn => {
+            return new Node(pn.newBoard, pn.newFreePlace, pn.newFullDistance, pn.newPath);
         });
 
-        nextNodesQueue.push(...possibleNodes);
+        nextNodesQueue.push(...children);
         currentNode = nextNodesQueue.pop();
         while (checkVisitedNode(currentNode.board)) {
             currentNode = nextNodesQueue.pop();
@@ -275,6 +275,7 @@ function solvePuzzle(initialBoard) {
     }
 
     printBoard(currentNode.board);
+    console.log(currentNode.path);
     //translate current node's path to class names 
     //return te path
 }
