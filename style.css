@@ -75,6 +75,8 @@ section{
     border: 2px solid black;
     font-family: "spider-man";
     font-size: 25px;
+
+    display: none;
 }
 
 .meme-face-container{

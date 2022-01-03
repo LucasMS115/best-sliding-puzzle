@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnSolve = document.querySelector("#btn__solve");
     const startModal = document.querySelector("#start__modal");
     const btnStart = document.querySelector("#btn__start");
+    const scoreBoardContainer = document.querySelector("#scoreboard__container");
     const chronometerNumber = document.querySelector("#chronometer__number");
     const movesNumber = document.querySelector("#moves__counter");
     const moveSound = document.querySelector("#move__sound");
@@ -82,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         movesNumber.textContent = movesCounter;
     }
 
-    function shuffleArray(array) {
+    function shuffleArrayRamdom(array) {
         let currentIndex = array.length;
         let randomIndex;
 
@@ -117,9 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    function shuffleBoard() {
+    function resetScoreboard() {
 
-        /* reseting move counter & timer */
         movesCounter = 0;
         movesNumber.textContent = movesCounter;
 
@@ -129,9 +129,14 @@ document.addEventListener("DOMContentLoaded", function () {
             minutes = `00`,
             seconds = `00`;
         chronometerCall = setInterval(chronometer, 1000);
-        /* reseting move counter & timer */
 
-        shuffleArray(allPositions);
+    }
+
+    function shuffleBoardRamdom() {
+
+        resetScoreboard();
+
+        shuffleArrayRamdom(allPositions);
         freePlace = allPositions[0];
         let i = 1;
 
@@ -144,13 +149,52 @@ document.addEventListener("DOMContentLoaded", function () {
         startingColors();
     };
 
+    function shuffleBoard() {
+        startingColors();
+        scoreBoardContainer.style.display = "none";
+        btnShuffle.style.display = "none";
+        btnSolve.style.display = "none";
 
+        let freePlaceCopy = freePlace;
+        let allPositionsCopy = [...allPositions];
+        let shuffleSequence = [];
+        let lastMovement = "";
+
+        for (let i = 0; i <= 50; i++) {
+
+            allPositionsCopy.forEach(piece => {
+                if (piece !== lastMovement && piece !== freePlaceCopy && checkMovebility(piece, freePlaceCopy)) {
+                    shuffleSequence.push(piece);
+                    lastMovement = freePlaceCopy;
+                    freePlaceCopy = piece;
+                }
+                shuffleArrayRamdom(allPositionsCopy);
+            });
+
+        }
+
+        executeShuffleSequence(shuffleSequence);
+    }
+
+    function executeShuffleSequence(shuffleSequence) {
+
+        if (shuffleSequence.length === 0) {
+            resetScoreboard();
+            scoreBoardContainer.style.display = "block";
+            btnShuffle.style.display = "block";
+            btnSolve.style.display = "block";
+            return;
+        };
+        const piece = document.getElementsByClassName(shuffleSequence.shift())[0];
+        move(piece);
+        setTimeout(() => executeShuffleSequence(shuffleSequence), 100);
+    }
 
     function checkFinished() {
         let finished = true;
 
         Object.entries(pieces).forEach((piece) => {
-            p = piece[1];
+            let p = piece[1];
             if (p.id.replace("__", " ") !== p.className) {
                 finished = false;
             }
@@ -170,11 +214,13 @@ document.addEventListener("DOMContentLoaded", function () {
             setColor(piece);
 
             updateMoveCounter();
+
+            if(checkFinished()) completeBoard();
         }
     }
 
     function executeSolution(solution) {
-        
+
         if (solution.length === 0) {
             setTimeout(completeBoard, 500);
             return;
@@ -234,17 +280,17 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             invertImage(-1);
-            
+
         }, 2300);
 
     }
 
-    function invertImage(scale){
+    function invertImage(scale) {
 
         Object.entries(pieces).forEach((piece) => {
             piece[1].children[0].style.transform = `scaleX(${scale})`;
         });
-        setTimeout(() => invertImage(scale*=-1), 3280);
+        setTimeout(() => invertImage(scale *= -1), 3280);
 
     }
 
@@ -252,8 +298,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnStart.addEventListener("click", () => {
         startModal.style.display = "none";
-        btnShuffle.style.display = "block";
-        btnSolve.style.display = "block";
         shuffleBoard();
     });
 
