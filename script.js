@@ -215,14 +215,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             updateMoveCounter();
 
-            if(checkFinished()) completeBoard();
+            if(checkFinished()) setTimeout(completeBoard, 400);;
         }
     }
 
     function executeSolution(solution) {
 
         if (solution.length === 0) {
-            setTimeout(completeBoard, 500);
             return;
         };
 
