@@ -231,6 +231,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function solve() {
+        btnShuffle.style.display = "none";
+        btnSolve.style.display = "none";
         const solution = solvePuzzle();
         if (solution === null) alert("Estado sem solução");
         else executeSolution(solution);
