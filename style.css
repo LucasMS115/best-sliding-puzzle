@@ -239,10 +239,17 @@ section{
 @media(max-width: 800px){
 
     section{
-        height: 95vh;
+        height: 85vh;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+}
+
+@media(max-width: 650px){
+    :root{
+        font-size: 5px;
     }
 
     .btn-base{
@@ -275,12 +282,5 @@ section{
     .meme-face-container{
         width: 15rem;
         margin-top: -.4rem;
-    }
-
-}
-
-@media(max-width: 650px){
-    :root{
-        font-size: 5px;
     }
 }
