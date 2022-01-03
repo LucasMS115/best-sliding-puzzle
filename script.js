@@ -15,24 +15,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*  DOM elements ------------------------------------------------------------*/
 
-    const pieces = {
+    let pieces = {
         leftTop: document.querySelector("#left__top"),
         centerTop: document.querySelector("#center__top"),
         rightTop: document.querySelector("#right__top"),
         leftMiddle: document.querySelector("#left__middle"),
         centerMiddle: document.querySelector("#center__middle"),
         rightMiddle: document.querySelector("#right__middle"),
-        // leftBottom: document.querySelector("#left__bottom"), this one is the missing piece
         centerBottom: document.querySelector("#center__bottom"),
         rightBottom: document.querySelector("#right__bottom")
     };
+    // left bottom is the puzzle's missing piece
 
+    const puzzleContainer = document.querySelector("#puzzle__container");
     const btnShuffle = document.querySelector("#btn__shuffle");
     const btnSolve = document.querySelector("#btn__solve");
     const startModal = document.querySelector("#start__modal");
     const btnStart = document.querySelector("#btn__start");
     const chronometerNumber = document.querySelector("#chronometer__number");
     const movesNumber = document.querySelector("#moves__counter");
+    const moveSound = document.querySelector("#move__sound");
+    const victoryMusic = document.querySelector("#victory__music");
 
     /*  DOM elements ------------------------------------------------------------*/
 
@@ -123,8 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
         clearInterval(chronometerCall);
         chronometerNumber.textContent = `00:00:00`;
         hours = `00`,
-        minutes = `00`,
-        seconds = `00`;
+            minutes = `00`,
+            seconds = `00`;
         chronometerCall = setInterval(chronometer, 1000);
         /* reseting move counter & timer */
 
@@ -141,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
         startingColors();
     };
 
-   
+
 
     function checkFinished() {
         let finished = true;
@@ -160,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (checkMovebility(piece.className, freePlace)) {
             let temp = piece.className;
+            moveSound.play();
             piece.className = freePlace;
             freePlace = temp;
 
@@ -169,17 +173,79 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function solve(){
+    function executeSolution(solution) {
+        
+        if (solution.length === 0) {
+            setTimeout(completeBoard, 500);
+            return;
+        };
+
+        const piece = document.getElementsByClassName(solution.shift())[0];
+        move(piece);
+        setTimeout(() => executeSolution(solution), 400);
+    }
+
+    function solve() {
         const solution = solvePuzzle();
-        if(solution === null) alert("Estado sem solução");
+        if (solution === null) alert("Estado sem solução");
         else executeSolution(solution);
     }
 
-    function executeSolution(solution){
-        if(solution.length === 0) return;
-        const piece = document.getElementsByClassName(solution.shift())[0];
-        move(piece);
-        setTimeout(() => executeSolution(solution), 100);
+    function appendMissingPiece() {
+        let missingPieceContainer = document.createElement("div");
+        missingPieceContainer.id = "left__bottom";
+        missingPieceContainer.className = "left bottom";
+        let missingPieceImage = document.createElement("img");
+        missingPieceImage.className = "x-left y-bottom";
+        missingPieceImage.src = "./assets/main_image.jpg";
+        missingPieceImage.alt = "Bully maguire dancing";
+        let missingPieceCover = document.createElement("div");
+        missingPieceCover.className = "cover";
+
+        missingPieceContainer.appendChild(missingPieceImage);
+        missingPieceContainer.appendChild(missingPieceCover);
+        puzzleContainer.appendChild(missingPieceContainer);
+
+        pieces = { ...pieces, leftBottom: document.querySelector("#left__bottom") }
+    }
+
+    function completeBoard() {
+
+        btnShuffle.style.display = "none";
+        btnSolve.style.display = "none";
+        clearInterval(chronometerCall);
+
+        appendMissingPiece();
+        victoryMusic.currentTime = "17.8";
+        victoryMusic.play();
+
+        setTimeout(() => {
+            Object.entries(pieces).forEach((piece) => {
+                piece[1].style.transition = "all linear 2s"
+                piece[1].style.borderRadius = "0";
+                piece[1].style.borderWidth = "0px";
+                piece[1].style.boxShadow = "rgb(74, 25, 250) 0px 0px 0px";
+            });
+        }, 400);
+
+        setTimeout(() => {
+            Object.entries(pieces).forEach((piece) => {
+                piece[1].children[0].src = "./assets/main_gif.gif"
+            });
+
+            invertImage(-1);
+            
+        }, 2300);
+
+    }
+
+    function invertImage(scale){
+
+        Object.entries(pieces).forEach((piece) => {
+            piece[1].children[0].style.transform = `scaleX(${scale})`;
+        });
+        setTimeout(() => invertImage(scale*=-1), 3280);
+
     }
 
     /* event listeners ---------------------------------------------------------------*/

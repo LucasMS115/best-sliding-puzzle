@@ -1,6 +1,6 @@
 import checkMovebility from "./checkMovebility.js";
 
-//to do: change this to visited boards
+//to do: change this to visited boards 
 let visitedNodes = [];
 
 class Node {
@@ -36,6 +36,7 @@ class Node {
         newBoard[this.freePlace.x][this.freePlace.y] = newBoard[piece.x][piece.y];
         newBoard[piece.x][piece.y] = { piece: null, distance: 0 }
 
+        //to do: change this to recalculate only the moved piece
         setDistances(newBoard);
 
         return { newBoard: newBoard, newFreePlace: piece, newFullDistance: calcFullDistance(newBoard), newPath: [...this.path, piece] }
@@ -56,6 +57,7 @@ class Node {
 
 }
 
+//to do: put this in a diferent file
 //src: https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
 const top = 0;
 const parent = i => ((i + 1) >>> 1) - 1;
@@ -125,6 +127,8 @@ class PriorityQueue {
     }
 }
 
+//------------------------------------------------------------------------------------------------------
+
 function calcDistance(currentPosition, rightPosition) {
     return Math.sqrt(Math.pow((currentPosition.x - rightPosition.x), 2))
         + Math.sqrt(Math.pow((currentPosition.y - rightPosition.y), 2));
@@ -151,8 +155,8 @@ function calcFullDistance(board) {
 
 function pieceStringToCoordinates(piece) {
 
-    let x = piece.split(" ")[1];
     let y = piece.split(" ")[0];
+    let x = piece.split(" ")[1];
 
     switch (y) {
         case 'left':
@@ -294,8 +298,6 @@ function getInitialState() {
 function solvePuzzle() {
 
     const initialState = getInitialState();
-    console.log(initialState);
-    printBoard(initialState.initialBoard);
     const nextNodesQueue = new PriorityQueue((node1, node2) => node1.fullDistance < node2.fullDistance);
     let currentNode = new Node(initialState.initialBoard, initialState.freePlace, initialState.fullDistance, []);
 
@@ -320,9 +322,10 @@ function solvePuzzle() {
     console.log( `# ${iterations} iterations #`);
     console.log( `# full distance = ${currentNode.fullDistance} #`);
     console.log( `# path size = ${currentNode.path.length} #`);
-
     printBoard(currentNode.board);
+
     currentNode.path = currentNode.path.map(piece => pieceCoordinatesToString(piece));
+
     if(currentNode.fullDistance > 0) return null;
     return currentNode.path;
 }

@@ -9,7 +9,7 @@ export default function checkMovebility(piece, freePlace) {
     const middlePieces = ["center top", "right middle", "center bottom", "left middle"];
     if (middlePieces.includes(piece) && middlePieces.includes(freePlace)) return false;
 
-    //prevent pieces non-neighbors of the free place from moving 
+    //prevent pieces non-neighbors of the free place from moving  -----------------------------------
     let horizontally = false;
 
     if (piece.includes("left")) {
