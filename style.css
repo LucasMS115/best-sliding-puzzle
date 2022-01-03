@@ -65,7 +65,7 @@ section{
 }
 
 .btn-action {
-    /* display: none; */
+    display: none;
 
     width: 100%;
     height: 100%;
@@ -97,7 +97,7 @@ section{
 }
 
 .scoreboard-container{
-    /* display: none; */
+    display: none;
 
     position: absolute;
     left: 2rem;
@@ -236,17 +236,51 @@ section{
     }
 }
 
-@media(max-width: 710px){
-    :root{
-        font-size: 5px;
-    }
+@media(max-width: 800px){
 
     section{
-        height: 90vh;
+        height: 95vh;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
+    .btn-base{
+        width: 35rem;
+        height: 15rem;
+        font-size: 7rem;
+    }
+
+    .btn-action {
+        width: 100%;
+        height: 100%;
+        font-size: 3.3rem;
+    }
+
+    .btn-shuffle-container {
+        width: 27rem;
+        height: 13rem;
+    }
     
+    .btn-solve-container {
+        width: 27rem;
+        height: 13rem;
+    }
+
+    .scoreboard-container{
+        padding: 1rem;
+        font-size: 4rem;
+    }
+
+    .meme-face-container{
+        width: 15rem;
+        margin-top: -.4rem;
+    }
+
+}
+
+@media(max-width: 650px){
+    :root{
+        font-size: 5px;
+    }
 }
