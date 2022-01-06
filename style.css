@@ -34,6 +34,14 @@ section{
     max-width: 1600px;
 }
 
+.blocker{
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
+    display: none;
+}
+
 .start-modal{
     position: absolute;
     display: flex;

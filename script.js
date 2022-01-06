@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     // left bottom is the puzzle's missing piece
 
+    const blocker = document.querySelector("#blocker");
     const puzzleContainer = document.querySelector("#puzzle__container");
     const btnShuffle = document.querySelector("#btn__shuffle");
     const btnSolve = document.querySelector("#btn__solve");
@@ -150,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function shuffleBoard() {
+        
         startingColors();
         scoreBoardContainer.style.display = "none";
         btnShuffle.style.display = "none";
@@ -178,11 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function executeShuffleSequence(shuffleSequence) {
 
+        blocker.style.display = "block";
         if (shuffleSequence.length === 0) {
             resetScoreboard();
             scoreBoardContainer.style.display = "block";
             btnShuffle.style.display = "block";
             btnSolve.style.display = "block";
+            blocker.style.display = "none";
             return;
         };
         const piece = document.getElementsByClassName(shuffleSequence.shift())[0];
@@ -215,7 +219,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             updateMoveCounter();
 
-            if(checkFinished()) setTimeout(completeBoard, 400);;
+            if(checkFinished()) {
+                blocker.style.display = "block";
+                setTimeout(completeBoard, 400);
+            };;
         }
     }
 
@@ -231,6 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function solve() {
+        blocker.style.display = "block";
         btnShuffle.style.display = "none";
         btnSolve.style.display = "none";
         const solution = solvePuzzle();
